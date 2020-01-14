@@ -19,7 +19,7 @@ for song in song_list:
     curr_song_page = requests.get(link)
     curr_soup = BeautifulSoup(curr_song_page.text, "lxml")
     song_title = curr_soup.find_all("b")[1]
-    song_html = song_title.next_element.next_element.next_element.next_element.next_element.next_element
+    song_html = song_title.next_element.next_element.next_element.next_element.next_element
     # first removing all <br/>
     for e in song_html.findAll('br'):
         e.extract()
@@ -37,9 +37,17 @@ for song in song_list:
                 print(elem)
                 break
     lines = lines[2:]
-    print("Adding " + song_title.string)
-    print("# lines:", len(lines))
-    with open("data/"+song_title.string.replace(" ", "-").strip('"'), "w") as f:
-        for line in lines:
-            f.write(line)
-            f.write("\n")
+    if len(lines) > 10:
+        print("Adding " + song_title.string)
+        print("# lines:", len(lines))
+        with open("data/"+song_title.string.replace(" ", "-").strip('"'), "w") as f:
+            for line in lines:
+                f.write(line)
+                f.write("\n")
+    else:
+        print("Problem CHILD")
+        print(song_title.string)
+        print(lines)
+        song_html = song_title.next_element.next_element.next_element.next_element
+        for elem in song_html:
+            print(elem)
