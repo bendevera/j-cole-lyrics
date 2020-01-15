@@ -63,17 +63,8 @@ Model Alteration Ideas:
 print("Building model...")
 model = keras.models.Sequential()
 model.add(layers.LSTM(
-                        64, 
-                        dropout=0.1,
-                        recurrent_dropout=0.4,
-                        return_sequences=True,
-                        input_shape=(maxlen, len(chars))
-                        ))
-model.add(layers.LSTM(
                         128, 
-                        dropout=0.1,
-                        recurrent_dropout=0.4,
-                        activation="relu"
+                        input_shape=(maxlen, len(chars))
                         ))
 model.add(layers.Dense(len(chars), activation="softmax"))
 
@@ -108,7 +99,7 @@ for epoch in range(1, 3):
     print("epoch: ", epoch)
     model.fit(X, y, batch_size=128, epochs=epoch)
     # saves model
-    model.save("app/lib/model"+str(epoch)+".h5")
+    model.save("app/lib/RNNE"+str(epoch)+"L1.h5")
 
     start_index = random.randint(0, len(text)-maxlen-1)
     generated_text = text[start_index: start_index+maxlen]
