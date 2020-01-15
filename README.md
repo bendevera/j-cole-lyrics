@@ -1,4 +1,6 @@
+## included:
+- api to make predictions
+- script to scrape lyrics of J-Cole songs from azlyrics.com
+
 ## TO DO:
-- need way to save chars and char_indices python list/dict from training model
-- complete /predict route
-- get API running
+- test other parameters for model 
