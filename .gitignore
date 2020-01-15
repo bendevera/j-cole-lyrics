@@ -1,2 +1,5 @@
-venv
+venv/
 compiled.txt
+.vscode
+__pycache__
+app/__pycache__

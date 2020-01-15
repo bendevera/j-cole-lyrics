@@ -3,6 +3,7 @@ import keras
 from keras import layers 
 import random 
 import sys 
+import json
 
 
 def reweight_distribution(original_distribution, temperature=.5):
@@ -35,6 +36,13 @@ print("Unique characters:", len(chars))
 
 # make a dictionary that has each char mapped to a index in chars
 char_indices = dict((char, chars.index(char)) for char in chars)
+
+print("Saving char and char_indices")
+with open('app/lib/char.json', 'w') as f:
+    json.dump(chars, f)
+with open('app/lib/char_indices.json', 'w') as f:
+    json.dump(char_indices, f)
+
 
 print("Vectorization...")
 # vectorization of features and targets
@@ -71,14 +79,14 @@ def sample(preds, temperature=1.0):
     return np.argmax(probas)
 
 
-for epoch in range(1, 60):
+for epoch in range(1, 3):
     print("epoch: ", epoch)
-    model.fit(X, y, batch_size=128, epochs=1)
+    model.fit(X, y, batch_size=128, epochs=epoch)
     start_index = random.randint(0, len(text)-maxlen-1)
     generated_text = text[start_index: start_index+maxlen]
     print('---- Generating text with: ' + generated_text + ' ----------')
 
-    for temperature in [.2, .5, .8, 1, 1.2]:
+    for temperature in [.2, .5, .8]:
         print("--------- temperature: ", temperature)
         sys.stdout.write(generated_text)
         for i in range(400):
@@ -92,5 +100,4 @@ for epoch in range(1, 60):
             generated_text = generated_text[1:]
 
             sys.stdout.write(next_char)
-
-model.save("./models/model.h5")
+    model.save("app/lib/model"+str(epoch)+".h5")
