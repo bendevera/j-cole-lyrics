@@ -4,3 +4,4 @@
 
 ## TO DO:
 - test other parameters for model 
+- scrape more lyrics

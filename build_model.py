@@ -6,12 +6,6 @@ import sys
 import json
 
 
-def reweight_distribution(original_distribution, temperature=.5):
-    distribution = np.log(original_distribution) / temperature 
-    distribution = np.exp(distribution)
-    return distribution / np.sum(distribution)
-
-
 path = "./compiled.txt"
 text = open(path).read().lower()
 print("text length:", len(text))
@@ -56,9 +50,31 @@ for i, sentence in enumerate(sentences):
 
 
 # building the model
+'''
+Model Alteration Ideas:
+- add some additional dense layers
+- look in to 1D CNN vs RNN
+- can you stack LSTM layers?
+- add dropout?
+- try making a GAN
 
+- Previous model did much better than below
+'''
+print("Building model...")
 model = keras.models.Sequential()
-model.add(layers.LSTM(128, input_shape=(maxlen, len(chars))))
+model.add(layers.LSTM(
+                        64, 
+                        dropout=0.1,
+                        recurrent_dropout=0.4,
+                        return_sequences=True,
+                        input_shape=(maxlen, len(chars))
+                        ))
+model.add(layers.LSTM(
+                        128, 
+                        dropout=0.1,
+                        recurrent_dropout=0.4,
+                        activation="relu"
+                        ))
 model.add(layers.Dense(len(chars), activation="softmax"))
 
 optimizer = keras.optimizers.RMSprop(lr=.01)
@@ -78,10 +94,22 @@ def sample(preds, temperature=1.0):
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
 
+'''
+Training Improvements:
+- add more to analyze accuracy of the models being built
+'''
 
+''' 
+Potential reasons for NAN issue: 
+occured when both layers had 128 as units (aka output_shape[-1])
+- model size isn't compatible with task
+'''
 for epoch in range(1, 3):
     print("epoch: ", epoch)
     model.fit(X, y, batch_size=128, epochs=epoch)
+    # saves model
+    model.save("app/lib/model"+str(epoch)+".h5")
+
     start_index = random.randint(0, len(text)-maxlen-1)
     generated_text = text[start_index: start_index+maxlen]
     print('---- Generating text with: ' + generated_text + ' ----------')
@@ -100,4 +128,3 @@ for epoch in range(1, 3):
             generated_text = generated_text[1:]
 
             sys.stdout.write(next_char)
-    model.save("app/lib/model"+str(epoch)+".h5")

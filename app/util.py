@@ -1,12 +1,14 @@
 import keras
-from keras.models import load_model
+# from keras.models import load_model
 import numpy as np
 import json
 import os
+import tensorflow
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(dir_path, 'lib/model2.h5')
-model = load_model(path)
+path = os.path.join(dir_path, 'lib/model1.h5')
+# model = load_model(path)
+model = tensorflow.keras.models.load_model(path)
 
 path = os.path.join(dir_path, 'lib/char.json')
 chars = json.loads(open(path).read())
@@ -22,7 +24,7 @@ def sample(preds, temperature=1.0):
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
 
-# need to save chars and char_indices somehow
+
 def generate_prediction(data):
     # need to add something to handle if it is shorter than maxlen
     temperature = data['temperature']
